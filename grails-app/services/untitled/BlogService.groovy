@@ -7,41 +7,26 @@ class BlogService {
 
     def show(Blog blog) {
         def result = Blog.createCriteria().list{
-
-            if (blog.getTitle() != null && blog.getTitle() != ""){
-                like ('title', "%"+blog.getTitle()+"%")
+            if (blog != null){
+                if (blog.getTitle() != null && blog.getTitle() != ""){
+                    like ('title', "%"+blog.getTitle()+"%")
+                }
+                if (blog.getDescription() != null && blog.getDescription() != ""){
+                    like ('description',"%"+ blog.getDescription()+"%")
+                }
             }
-            if (blog.getDescription() != null && blog.getDescription() != ""){
-                like ('description',"%"+ blog.getDescription()+"%")
-            }
-
         }
         return result
     }
 
     def save(Blog blog) {
 
-        if (blog.getId() != null && blog.getId()!=0){
-
-            def base = Blog.findById(blog.getId())
-            base.setTitle(blog.getTitle())
-            base.setDescription(blog.getDescription())
-            if (base.save()) {
-                println("Save Success")
-            }else{
-                println("Save Fail!")
-                log.info(this.getClass().getName() + "::Fail!")
-            }
+        if (!blog.save()) {
+            println("Save Fail!")
+            log.info(this.getClass().getName() + "::Fail!")
         }else{
-            if (!blog.save()) {
-                println("Save Fail!")
-                log.info(this.getClass().getName() + "::Fail!")
-            }else{
-                println("Save Success")
-            }
+            println("Save Success")
         }
-
-
     }
 
     def delete(long id) {

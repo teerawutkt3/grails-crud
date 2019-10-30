@@ -7,39 +7,56 @@ class BlogController {
     BlogService blogService
 
     def index(Blog blog) {
-        def list = blogService.show(blog)
         ModelAndView mav = new ModelAndView("/blog/index.gsp")
-        mav.addObject("blog", blog)
-        mav.addObject("list", list)
+
+        try {
+            def list = blogService.show(blog)
+            mav.addObject("blog", blog != null ? blog : new Blog())
+            mav.addObject("list", list)
+
+        } catch (Exception e) {
+            e.printStackTrace()
+        }
+
         return mav
     }
 
-    def save(Blog blog){
+    def save(Blog blog) {
         try {
             blogService.save(blog)
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace()
         }
-        redirect action:'index', controller: 'blog'
+        redirect action: 'index', controller: 'blog'
     }
 
-    def create(){
+    def create() {
         ModelAndView mav = new ModelAndView("/blog/form.gsp")
-        mav.addObject("blog", new Blog())
-        return  mav
-    }
-    def update(long id){
-        ModelAndView mav = new ModelAndView("/blog/form.gsp")
-        def blog = Blog.get(id)
-        mav.addObject("blog", blog)
-    return mav
-}
-    def delete(long id){
         try {
-            blogService.delete(id)
-        }catch(Exception e){
+            mav.addObject("blog", new Blog())
+        } catch (Exception e) {
             e.printStackTrace()
         }
-        redirect action:'index', controller: 'blog'
+        return mav
+    }
+
+    def update(long id) {
+        ModelAndView mav = new ModelAndView("/blog/form.gsp")
+        try {
+            def blog = Blog.get(id)
+            mav.addObject("blog", blog)
+        } catch (Exception e) {
+            e.printStackTrace()
+        }
+        return mav
+    }
+
+    def delete(long id) {
+        try {
+            blogService.delete(id)
+        } catch (Exception e) {
+            e.printStackTrace()
+        }
+        redirect action: 'index', controller: 'blog'
     }
 }
